@@ -11,7 +11,7 @@ function App(_: {}): React.ReactElement {
   const [ideas, setIdeas] = useState<TIdea[]>([]);
 
   useEffect(() => {
-    Ideas.fetchAll().then((data) => setIdeas(data));
+    Ideas.fetchAll().then(data => setIdeas(data));
   }, []);
 
   function updateIdea({ id, title, body }: TIdea): void {
@@ -20,7 +20,7 @@ function App(_: {}): React.ReactElement {
 
   return (
     <div className={css(styles.main)}>
-      {ideas.map((idea) => (
+      {ideas.map(idea => (
         <Tile key={idea.id} idea={idea} updateIdea={updateIdea} />
       ))}
     </div>

@@ -60,7 +60,7 @@ class Idea {
       title: '',
       body: '',
     };
-    this.collection.push(idea);
+    this.collection = [...this.collection, idea];
     this.aaid = this.aaid + 1;
     return await idea;
   }
@@ -80,6 +80,17 @@ class Idea {
     ideaToUpdate.title = idea.title ?? ideaToUpdate.title;
     ideaToUpdate.body = idea.body ?? ideaToUpdate.body;
     console.log(ideaToUpdate);
+
+    this.collection = this.collection.map(originalIdea => {
+      if (idea.id != originalIdea.id) {
+        return originalIdea;
+      }
+      return {
+        ...originalIdea,
+        body: idea.body,
+        title: idea.title,
+      };
+    })
 
     return await ideaToUpdate;
   }
