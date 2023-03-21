@@ -26,19 +26,21 @@ function Tile({ idea, updateIdea }: Props): React.ReactElement {
       <div className={css(styles.title)}>
         <input
           className={css(styles.titleInput)}
+          maxLength={21}
           onBlur={() => onBlur()}
           onChange={(e: FormEvent<HTMLInputElement>) =>
             setTitle(e.currentTarget.value)
           }
           placeholder="Idea..."
           value={title}
+          autoFocus={true}
         />
       </div>
       <div className={css(styles.body)}>
         <textarea
           className={css(styles.bodyTextarea)}
           maxLength={140}
-          onBlur={() => onBlur()}
+          onBlur={onBlur}
           onChange={(e: FormEvent<HTMLTextAreaElement>) =>
             setBody(e.currentTarget.value)
           }
@@ -65,13 +67,14 @@ const styles = StyleSheet.create({
     padding: '10px',
   },
   titleInput: {
-    width: '100%',
-    height: '100%',
-    border: 0,
     background: 'none',
+    border: 0,
     color: 'white',
     fontFamily: 'inherit',
-    fontSize: 'inherit',
+    fontSize: '14px',
+    height: '100%',
+    overflow: 'visible',
+    width: '100%',
   },
   body: {
     flex: '1 1 auto',

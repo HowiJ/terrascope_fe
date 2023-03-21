@@ -77,10 +77,6 @@ class Idea {
       return null;
     }
 
-    ideaToUpdate.title = idea.title ?? ideaToUpdate.title;
-    ideaToUpdate.body = idea.body ?? ideaToUpdate.body;
-    console.log(ideaToUpdate);
-
     this.collection = this.collection.map(originalIdea => {
       if (idea.id != originalIdea.id) {
         return originalIdea;
