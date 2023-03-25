@@ -1,17 +1,18 @@
 /** @format */
 
-import type { FormEvent } from 'react';
+import type { FormEvent, ReactElement } from 'react';
 import type { TIdea } from './Ideas';
 
 import React, { useState } from 'react';
 import { StyleSheet, css } from 'aphrodite';
 
 type Props = Readonly<{
+  deleteIdea: (id: number) => void;
   idea: TIdea;
   updateIdea: (idea: TIdea) => void;
 }>;
 
-function Tile({ idea, updateIdea }: Props): React.ReactElement {
+function Tile({ deleteIdea, idea, updateIdea }: Props): ReactElement {
   const [title, setTitle] = useState(idea.title);
   const [body, setBody] = useState(idea.body);
 
@@ -21,13 +22,20 @@ function Tile({ idea, updateIdea }: Props): React.ReactElement {
     }
   }
 
+  function onDelete(): void {
+    deleteIdea(idea.id);
+  }
+
   return (
     <div className={css(styles.main)}>
+      <div className={css(styles.trash)} onClick={onDelete}>
+        X
+      </div>
       <div className={css(styles.title)}>
         <input
           className={css(styles.titleInput)}
           maxLength={21}
-          onBlur={() => onBlur()}
+          onBlur={onBlur}
           onChange={(e: FormEvent<HTMLInputElement>) =>
             setTitle(e.currentTarget.value)
           }
@@ -54,12 +62,16 @@ function Tile({ idea, updateIdea }: Props): React.ReactElement {
 
 const styles = StyleSheet.create({
   main: {
+    ':hover :first-child': {
+      display: 'inline',
+    },
     backgroundColor: '#7F9488',
     borderRadius: '8px',
     color: 'white',
     display: 'flex',
     flexDirection: 'column',
     height: '150px',
+    position: 'relative',
     width: '150px',
   },
   title: {
@@ -69,6 +81,7 @@ const styles = StyleSheet.create({
   titleInput: {
     background: 'none',
     border: 0,
+    borderColor: 'light grey',
     color: 'white',
     fontFamily: 'inherit',
     fontSize: '14px',
@@ -80,6 +93,7 @@ const styles = StyleSheet.create({
     flex: '1 1 auto',
     fontSize: '10px',
     padding: '10px',
+    display: 'flex',
   },
   bodyTextarea: {
     background: 'none',
@@ -88,9 +102,24 @@ const styles = StyleSheet.create({
     fontFamily: 'inherit',
     fontSize: '10px',
     height: '100%',
+    outlineColor: 'lightgray',
     overflow: 'hidden',
     resize: 'none',
     width: '100%',
+  },
+  trash: {
+    backgroundColor: '#353543',
+    borderRadius: '20px',
+    cursor: 'pointer',
+    display: 'none',
+    fontSize: '15px',
+    height: '20px',
+    position: 'absolute',
+    right: '-8px',
+    textAlign: 'center',
+    top: '-8px',
+    userSelect: 'none',
+    width: '20px',
   },
 });
 

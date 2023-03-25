@@ -22,7 +22,7 @@ class Idea {
   collection: TIdea[] = [
     {
       id: 1,
-      created_date: 1679385130501,
+      created_date: 1679385130000,
       title: 'My First Idea',
       body: 'This is my first idea, I haven\'t had one before this one!',
     },
@@ -43,8 +43,7 @@ class Idea {
    */
   async fetchAll(): Promise<TIdea[]> {
     // fetch('/ideas', { method:'GET' });
-    console.log('GET /ideas');
-    return await this.collection;
+    return await [...this.collection];
   }
 
   /**
@@ -74,21 +73,23 @@ class Idea {
     console.log('POST /ideas/update');
     const ideaToUpdate = this.collection.find(({ id }) => id === idea.id);
     if (ideaToUpdate == null) {
+      console.warn(`idea not found id: ${idea.id}`);
       return null;
+    }
+    const updatedIdea = {
+      ...ideaToUpdate,
+      body: idea.body,
+      title: idea.title,
     }
 
     this.collection = this.collection.map(originalIdea => {
-      if (idea.id != originalIdea.id) {
+      if (idea.id !== originalIdea.id) {
         return originalIdea;
       }
-      return {
-        ...originalIdea,
-        body: idea.body,
-        title: idea.title,
-      };
+      return updatedIdea;
     })
 
-    return await ideaToUpdate;
+    return await updatedIdea;
   }
 
   /**
@@ -98,9 +99,11 @@ class Idea {
   async delete(idToDelete: number): Promise<boolean> {
     // fetch('/ideas/delete', { method: 'POST' });
     console.log('POST /ideas/delete');
-    this.collection = this.collection.filter(({ id }) => id != idToDelete);
+    this.collection = this.collection.filter(({ id }) => id !== idToDelete);
     return true;
   }
 }
 
-export default new Idea();
+const idea = new Idea();
+
+export default idea;
