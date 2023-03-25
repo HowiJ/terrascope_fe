@@ -1,5 +1,5 @@
 import type { ReactElement, FormEvent } from 'react';
-import type { TIdea } from './Ideas';
+import type { Idea } from './Ideas';
 
 import React from 'react';
 import { StyleSheet, css } from 'aphrodite';
@@ -51,8 +51,8 @@ function Sorter({ value, onChange }: Props): ReactElement {
   );
 }
 
-function sorter(sorting: Sorting): (a: TIdea, b: TIdea) => number {
-  return function sortFn(a: TIdea, b: TIdea): number {
+function sorter(sorting: Sorting): (a: Idea, b: Idea) => number {
+  return function sortFn(a: Idea, b: Idea): number {
     switch (sorting) {
       case Sorting.TITLE_ASC:
         return a.title.localeCompare(b.title);

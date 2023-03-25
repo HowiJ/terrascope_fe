@@ -1,66 +1,67 @@
 /** @format */
 
-export type TPartialIdea = {
-  title: string;
-  body: string;
-};
+import Storage from './Storage';
 
 /**
  * id: Auto-increment ID
  * created_date: Timestamp
  */
-export type TIdea = TPartialIdea & {
+export type Idea = {
   id: number;
   created_date: number;
+  title: string;
+  body: string;
 };
 
 /**
- * Mimics the back-end
+ * Handles the CRUD for the Ideas
  */
-class Idea {
+class IdeaHandler {
+  storage: Storage<Idea> = new Storage<Idea>();
   // collections of ideas
-  collection: TIdea[] = [
-    {
-      id: 1,
-      created_date: 1679385130000,
-      title: 'My First Idea',
-      body: 'This is my first idea, I haven\'t had one before this one!',
-    },
-    {
-      id: 2,
-      created_date: 1679385130501,
-      title: 'My Second Idea',
-      body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque interdum rutrum sodales. Nullam mattis fermentum libero, non volutpat.',
-    },
-  ];
+  collection: Idea[] = [];
 
   // Auto-Increment ID
-  aaid = this.collection.length + 1;
+  aaid = 0;
+
+  constructor() {
+    this.storage.fetch().then(data => {
+      this.collection = data;
+      const lastAAID = this.collection.reduce((accum, idea) => {
+        if (idea.id > accum) {
+          return idea.id;
+        }
+        return accum;
+      }, 0);
+      this.aaid = lastAAID;
+    });
+  }
 
   /**
    * Mimics 'GET /ideas' route
    * Fetches all ideas
    */
-  async fetchAll(): Promise<TIdea[]> {
+  async fetchAll(): Promise<Idea[]> {
     // fetch('/ideas', { method:'GET' });
-    return await [...this.collection];
+    this.collection = await this.storage.fetch();
+    return this.collection;
   }
 
   /**
    * Mimics 'POST /ideas/new' route
    * Creates a new idea
    */
-  async insert(): Promise<TIdea> {
+  async insert(): Promise<Idea> {
     // fetch('/ideas/new', { method: 'POST' });
     console.log('POST /ideas/new');
+    this.aaid = this.aaid + 1;
     const idea = {
       id: this.aaid,
       created_date: Date.now(),
       title: '',
       body: '',
     };
-    this.collection = [...this.collection, idea];
-    this.aaid = this.aaid + 1;
+    this.collection = await this.storage.store([...this.collection, idea]);
     return await idea;
   }
 
@@ -68,7 +69,7 @@ class Idea {
    * Mimics 'POST /ideas/update' route
    * Updates an existing idea
    */
-  async update(idea: TPartialIdea & { id: number }): Promise<TIdea | null> {
+  async update(idea: Partial<Idea> & { id: number }): Promise<Idea | null> {
     // fetch('/ideas/update', { method: 'POST' });
     console.log('POST /ideas/update');
     const ideaToUpdate = this.collection.find(({ id }) => id === idea.id);
@@ -78,17 +79,16 @@ class Idea {
     }
     const updatedIdea = {
       ...ideaToUpdate,
-      body: idea.body,
-      title: idea.title,
-    }
+      ...idea,
+    };
 
-    this.collection = this.collection.map(originalIdea => {
+    const updatedCollection = this.collection.map(originalIdea => {
       if (idea.id !== originalIdea.id) {
         return originalIdea;
       }
       return updatedIdea;
-    })
-
+    });
+    this.collection = await this.storage.store(updatedCollection);
     return await updatedIdea;
   }
 
@@ -99,11 +99,12 @@ class Idea {
   async delete(idToDelete: number): Promise<boolean> {
     // fetch('/ideas/delete', { method: 'POST' });
     console.log('POST /ideas/delete');
-    this.collection = this.collection.filter(({ id }) => id !== idToDelete);
+    this.collection = await this.storage.store(this.collection.filter(({ id }) => id !== idToDelete));
+
     return true;
   }
 }
 
-const idea = new Idea();
+const idea = new IdeaHandler();
 
 export default idea;

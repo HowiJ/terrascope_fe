@@ -1,34 +1,44 @@
 /** @format */
 
-import type { TIdea } from './Ideas';
+import type { Idea } from './Ideas';
 
 import React, { useEffect, useState, useMemo } from 'react';
-import Ideas from './Ideas';
-import Tile from './Tile';
-import Sorter, { Sorting, sorter } from './Sorter';
 import { StyleSheet, css } from 'aphrodite';
-import CreateButton from './CreateButton';
 
-function App(_: {}): React.ReactElement {
-  const [ideas, setIdeas] = useState<TIdea[]>([]);
+import CreateButton from './CreateButton';
+import IdeaHandler from './Ideas';
+import Sorter, { Sorting, sorter } from './Sorter';
+import Tile from './Tile';
+import Saving, { SaveState } from './Saving';
+
+function App(_: Readonly<{}>): React.ReactElement {
+  const [ideas, setIdeas] = useState<Idea[]>([]);
   const [sorting, setSorting] = useState<Sorting>(Sorting.CREATED_DATE_ASC);
+  const [saveState, setSaveState] = useState<SaveState>(SaveState.INITIAL);
 
   function fetchIdeas() {
-    Ideas.fetchAll().then(data => setIdeas(data));
+    IdeaHandler.fetchAll().then(data => {
+      setIdeas(data);
+    });
   }
-  function updateIdea({ id, title, body }: TIdea): void {
-    Ideas.update({ id, title, body }).then(() => fetchIdeas());
+  function reFetch() {
+    fetchIdeas();
+    setSaveState(SaveState.SAVED);
+  }
+  function updateIdea({ id, title, body }: Idea): void {
+    setSaveState(SaveState.SAVING);
+    IdeaHandler.update({ id, title, body }).then(reFetch);
   }
   function onCreate() {
-    Ideas.insert().then(() => fetchIdeas());
+    setSaveState(SaveState.SAVING);
+    IdeaHandler.insert().then(reFetch);
   }
   function deleteIdea(id: number): void {
-    Ideas.delete(id).then(() => fetchIdeas());
+    setSaveState(SaveState.SAVING);
+    IdeaHandler.delete(id).then(reFetch);
   }
 
-  useEffect(() => {
-    fetchIdeas();
-  }, []);
+  useEffect(fetchIdeas, []);
 
   const sortedIdeas = useMemo(
     () => [...ideas].sort(sorter(sorting)),
@@ -43,6 +53,7 @@ function App(_: {}): React.ReactElement {
           value={sorting}
           onChange={(sorting: Sorting) => setSorting(sorting)}
         />
+        {saveState !== SaveState.INITIAL && <Saving state={saveState} />}
       </div>
       <div className={css(styles.ideas)}>
         {sortedIdeas.map(idea => (

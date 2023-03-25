@@ -1,7 +1,7 @@
 /** @format */
 
 import type { FormEvent, ReactElement } from 'react';
-import type { TIdea } from './Ideas';
+import type { Idea } from './Ideas';
 
 import React, { useState } from 'react';
 import { StyleSheet, css } from 'aphrodite';
@@ -14,8 +14,8 @@ const DIFF_TO_SHOW = 15;
 
 type Props = Readonly<{
   deleteIdea: (id: number) => void;
-  idea: TIdea;
-  updateIdea: (idea: TIdea) => void;
+  idea: Idea;
+  updateIdea: (idea: Idea) => void;
 }>;
 
 function Tile({ deleteIdea, idea, updateIdea }: Props): ReactElement {
