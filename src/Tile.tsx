@@ -6,6 +6,8 @@ import type { TIdea } from './Ideas';
 import React, { useState } from 'react';
 import { StyleSheet, css } from 'aphrodite';
 
+import CharCount from './CharCount';
+
 type Props = Readonly<{
   deleteIdea: (id: number) => void;
   idea: TIdea;
@@ -56,6 +58,7 @@ function Tile({ deleteIdea, idea, updateIdea }: Props): ReactElement {
           value={body}
         />
       </div>
+      <CharCount charCount={body.length} />
     </div>
   );
 }
@@ -66,7 +69,7 @@ const styles = StyleSheet.create({
       display: 'inline',
     },
     backgroundColor: '#7F9488',
-    borderRadius: '8px',
+    borderRadius: '4px',
     color: 'white',
     display: 'flex',
     flexDirection: 'column',
@@ -76,7 +79,7 @@ const styles = StyleSheet.create({
   },
   title: {
     borderBottom: '2px solid white',
-    padding: '10px',
+    padding: '4px 10px',
   },
   titleInput: {
     background: 'none',
@@ -84,7 +87,7 @@ const styles = StyleSheet.create({
     borderColor: 'light grey',
     color: 'white',
     fontFamily: 'inherit',
-    fontSize: '14px',
+    fontSize: '12px',
     height: '100%',
     overflow: 'visible',
     width: '100%',
@@ -92,7 +95,7 @@ const styles = StyleSheet.create({
   body: {
     flex: '1 1 auto',
     fontSize: '10px',
-    padding: '10px',
+    padding: '4px 4px 8px 4px',
     display: 'flex',
   },
   bodyTextarea: {
@@ -103,7 +106,6 @@ const styles = StyleSheet.create({
     fontSize: '10px',
     height: '100%',
     outlineColor: 'lightgray',
-    overflow: 'hidden',
     resize: 'none',
     width: '100%',
   },
