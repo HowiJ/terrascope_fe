@@ -6,7 +6,11 @@ import type { TIdea } from './Ideas';
 import React, { useState } from 'react';
 import { StyleSheet, css } from 'aphrodite';
 
+import Trash from './Trash';
 import CharCount from './CharCount';
+
+const MAX_CHAR_COUNT = 140;
+const DIFF_TO_SHOW = 15;
 
 type Props = Readonly<{
   deleteIdea: (id: number) => void;
@@ -30,9 +34,7 @@ function Tile({ deleteIdea, idea, updateIdea }: Props): ReactElement {
 
   return (
     <div className={css(styles.main)}>
-      <div className={css(styles.trash)} onClick={onDelete}>
-        X
-      </div>
+      <Trash onClick={onDelete} />
       <div className={css(styles.title)}>
         <input
           className={css(styles.titleInput)}
@@ -58,7 +60,9 @@ function Tile({ deleteIdea, idea, updateIdea }: Props): ReactElement {
           value={body}
         />
       </div>
-      <CharCount charCount={body.length} />
+      {MAX_CHAR_COUNT - body.length <= DIFF_TO_SHOW && (
+        <CharCount charCount={body.length} maxCount={MAX_CHAR_COUNT} />
+      )}
     </div>
   );
 }
@@ -94,7 +98,7 @@ const styles = StyleSheet.create({
   },
   body: {
     flex: '1 1 auto',
-    fontSize: '10px',
+    fontSize: '11px',
     padding: '4px 4px 8px 4px',
     display: 'flex',
   },
@@ -108,20 +112,6 @@ const styles = StyleSheet.create({
     outlineColor: 'lightgray',
     resize: 'none',
     width: '100%',
-  },
-  trash: {
-    backgroundColor: '#353543',
-    borderRadius: '20px',
-    cursor: 'pointer',
-    display: 'none',
-    fontSize: '15px',
-    height: '20px',
-    position: 'absolute',
-    right: '-8px',
-    textAlign: 'center',
-    top: '-8px',
-    userSelect: 'none',
-    width: '20px',
   },
 });
 

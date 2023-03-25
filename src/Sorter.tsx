@@ -33,7 +33,6 @@ function Sorter({ value, onChange }: Props): ReactElement {
         if (newValue in Sorting) {
           onChange(newValue);
         }
-        console.log(typeof e.currentTarget.value);
       }}
     >
       <option value={Sorting.CREATED_DATE_ASC}>
